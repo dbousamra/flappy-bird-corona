@@ -12,4 +12,4 @@ thirdH = display.contentHeight * 0.33
 local storyboard = require "storyboard"
 
 -- load menu screen
-storyboard.gotoScene( "scenes.menu" )
+storyboard.gotoScene( "scenes.menu" ) 
