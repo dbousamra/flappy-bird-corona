@@ -1,45 +1,22 @@
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local widget = require "widget"
--- local sprite = require "sprite"
+local background = require "util.background"
 
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
   local group = self.view 
 
-  local bg          = scene:createBackground()
+  local bg          = Background:createBackground()
+  local floor       = Background:createFloor()
   local title       = scene:createGameTitle()
-  local floor       = scene:createFloor()
   local playButton  = scene:createPlayButton()
-  local flappy  = scene:createFlappy()
+  local flappy      = scene:createFlappy()
   group:insert(bg)
-  group:insert(title)
   group:insert(floor)
+  group:insert(title)
   group:insert(playButton)
   group:insert(flappy)
-end
-
-function scene:createBackground()
-  local backgrounds = { "images/background-day.png", "images/background-night.png"}
-  local randomBackground = backgrounds[math.random(1, #backgrounds)]
-  local background = display.newImageRect(randomBackground, screenW, screenH)
-    background.x = halfW
-    background.y = halfH
-  return background
-end
-
-function scene:createFloor()
-  local floor = display.newImageRect("images/floor.png", screenW + 60, 256 + 100)
-    floor.x = halfW  
-    floor.y = screenH - (256/2) + 100
-
-  local function reset_landscape( landscape )
-    landscape.x = halfW
-    transition.to( landscape, { x = halfW - 30 , time=100, onComplete=reset_landscape } )
-  end
-
-  reset_landscape(floor)
-  return floor
 end
 
 function scene:createGameTitle()
@@ -56,7 +33,7 @@ function scene:createPlayButton()
       event.target.y = event.target.y + 2
     elseif "ended" == phase then
       event.target.y = event.target.y - 2
-      -- storyboard.gotoScene( "game", "fade", 500 )
+      storyboard.gotoScene( "scenes.game", "fade", 200 )
     end
   end
 
@@ -87,17 +64,13 @@ function scene:createFlappy()
   animation.yScale = 4 * animation.yScale
   animation:play()
 
-
   local function bounceFlappy(flappy, speed)
     local function bounceFlappyDown(flappy)
       transition.to( flappy, { y = flappy.y + 10 , time=300, transition=easing.inOutSine, onComplete=bounceFlappy } )
     end
     transition.to( flappy, { y = flappy.y - 10 , time=300, transition=easing.inOutSine, onComplete=bounceFlappyDown } )
   end
-
-
   bounceFlappy(animation)
-
   return animation
 end
 
